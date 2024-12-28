@@ -1,9 +1,10 @@
 import express from 'express';
-import { signUp } from '../middleware/authMiddleware.js';
+import { signin, signup } from '../middleware/authMiddleware.js';
 
 
 const router = express.Router();
 
-router.post('/signUp', signUp)
+router.post('/signup', signup)
+router.get('/signin', signin)
 
 export default router;

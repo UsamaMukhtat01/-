@@ -1,6 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cookieParser from "cookie-parser";
 import userRoutes from '../backend/routes/authRoutes.js'
+import movieRoutes from '../backend/routes/movieRoutes.js'
 
 mongoose
   .connect("mongodb://localhost:27017/")
@@ -15,6 +17,7 @@ mongoose
   const app = express();
   
   app.use(express.json());
+  app.use(cookieParser());
   
   app.listen(3000, () => {
     console.log("Server is running on port 3000!");
@@ -22,6 +25,7 @@ mongoose
   
     
   app.use('/api/auth', userRoutes)
+  app.use('/api/user', movieRoutes)
 
 
   app.use((err, res) => {

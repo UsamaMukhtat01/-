@@ -1,8 +1,9 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from "cookie-parser";
-import userRoutes from '../backend/routes/authRoutes.js'
-import movieRoutes from '../backend/routes/movieRoutes.js'
+import userRoutes from '../backend/routes/authRoutes.js';
+import movieRoutes from '../backend/routes/movieRoutes.js';
+import reservationRoutes from '../backend/routes/reservationRoutes.js';
 
 mongoose
   .connect("mongodb://localhost:27017/")
@@ -26,6 +27,7 @@ mongoose
     
   app.use('/api/auth', userRoutes)
   app.use('/api/user', movieRoutes)
+  app.use('/api/user', reservationRoutes)
 
 
   app.use((err, res) => {

@@ -31,12 +31,3 @@ export const createMovie = async(req, res, next)=>{
     }
 }
 
-export const getMovies = async(req, res, next)=>{
-    try{
-        const allMovies = await Movie.find()
-        // const countMovies = allMovies.length
-        res.status(200).json({message: "List of All Movies",count:allMovies.length, data: allMovies})
-    }catch(error){
-        next(error)
-    }
-}

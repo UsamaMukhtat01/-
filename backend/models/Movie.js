@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const MovieSchema = new mongoose.Schema({
     title:{
         type: String,
-        unique: true,
-        // required: true
+        required: true,
+        unique: true
     },
     description:{
         type: String,
@@ -12,13 +12,13 @@ const MovieSchema = new mongoose.Schema({
     },
     genres:[{
         type: String,
+        required: true
     }],
     showTime:[{
         date:{type: Date, required: true},
-        time:{type: String, required: true},
+        time:{type: String, required: true, unique: true},
         capacity: {type: Number, required: true},
         reservedSeats:{type:[Number], default:[]},
-        // unique: true
 
     }]
 })

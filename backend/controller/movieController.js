@@ -31,3 +31,41 @@ export const createMovie = async(req, res, next)=>{
     }
 }
 
+export const updateMovie = async(req, res, next)=>{
+    
+    if(req.user.role === 'User'){
+        return next(errorHandler(400, "You are not allowed to update the movie"))
+    }
+    const { movieId } = req.params;
+        if (!movieId) {
+            return next(errorHandler(400, "Movie ID is required"));
+        }
+    try{
+        const updatedMovie = await Movie.findByIdAndUpdate(req.params.movieId,{
+            $set:{
+                title: req.body.title,
+                description: req.body.description,
+                genres: req.body.genres,
+                showTime: req.body.showTime
+            }
+        },{new: true});
+        if (!updatedMovie) {
+            return next(errorHandler(404, "Movie not found or could not be updated"));
+        }
+        res.status(200).json(updatedMovie)
+
+    }catch(error){
+        return next(error)
+    }
+
+}
+
+
+export const getMovies = async(req, res, next)=>{
+    try{
+        const allMovies = await Movie.find()
+        res.status(200).json({message: "List of All Movies",count:allMovies.length, data: allMovies})
+    }catch(error){
+        next(error)
+    }
+}

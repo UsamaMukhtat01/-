@@ -38,3 +38,28 @@ export const reserveSeat = async(req, res, next)=>{
         return next(error);
     }
 }
+
+export const cancelReservation = async (req, res) => {
+    try {
+        // const { id } = req.params;
+        // console.log("Reservation ID:", id);
+        const reservation = await Reservation.findById(req.params.reservationId).populate('showTime.movieId');
+        if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
+
+        // if (reservation.user.toString() !== req.user._id.toString()) {
+        //     return res.status(403).json({ message: 'Unauthorized' });
+        // }
+
+        reservation.status = 'Cancelled';
+        await reservation.save();
+
+        const movie = await Movie.findById(reservation.showTime.movieId);
+        const showTime = movie.showTime.find(st => st.date.toISOString() === reservation.showTime.date && st.time === reservation.showTime.time);
+        showTime.reservedSeats = showTime.reservedSeats.filter(seat => seat !== reservation.showTime.seat);
+        await movie.save();
+
+        res.status(200).json({ message: 'Reservation cancelled successfully', reservation });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

@@ -60,6 +60,25 @@ export const updateMovie = async(req, res, next)=>{
 
 }
 
+export const deleteMovie = async(req, res, next)=>{
+    if(req.user.role === 'User'){
+        return next(errorHandler(403, "You are not allowed to delete the movie"))
+    }
+    const { movieId } = req.params;
+        if (!movieId) {
+            return next(errorHandler(400, "Movie ID is required"));
+        }
+    try{
+        const deleteMovie = await Movie.findByIdAndDelete(req.params.movieId);
+        if (!deleteMovie) {
+            return next(errorHandler(404, "Movie not found or could not be deleted"));
+        }
+        res.status(200).json("Movie deleted successfully")
+
+    }catch(error){
+        return next(error)
+    }
+}
 
 export const getMovies = async(req, res, next)=>{
     try{

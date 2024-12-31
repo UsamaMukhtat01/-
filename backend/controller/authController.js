@@ -64,3 +64,30 @@ export const signin = async(req, res, next)=>{
         next(error)
     }
 }
+
+export const promoteToAdmin = async (req, res, next) => {
+    const {email} = req.body;
+
+    if (req.user.role === 'User') {
+        return next(errorHandler(403, 'Only admins can promote users to Admin'));
+    }
+
+    try {
+        const user = await User.findOne(email);
+        if (!user) {
+            return next(errorHandler(404, 'User not found!'));
+        }
+        const isAdmin = await User.findById(req.params.id)
+        if (isAdmin.role === 'Admin') {
+            return next(errorHandler(400, 'User is already an Admin'));
+        }
+
+        isAdmin.role = 'Admin';
+        await isAdmin.save();
+        const {password: pass, ...rest}= isAdmin._doc;
+
+        res.status(200).json({ message: 'User promoted to Admin successfully', rest });
+    } catch (error) {
+        next(error);
+    }
+};

@@ -5,6 +5,7 @@ function App() {
   return (
     <>
       <h1>Movie Reservation</h1>
+      
     </>
   )
 }

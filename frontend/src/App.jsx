@@ -1,11 +1,20 @@
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import SignUp from "./pages/SignUp";
+import Signin from "./pages/Signin";
+
 
 
 function App() {
 
   return (
     <>
-      <h1>Movie Reservation</h1>
-      
+      <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<SignUp></SignUp>}></Route>
+        <Route path='/signin' element={<Signin></Signin>}></Route>
+      </Routes>
+      </BrowserRouter>
+
     </>
   )
 }

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import {Link} from 'react-router-dom'
 
 export default function SignUp() {
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(null);
   const [error, setError] = useState(null);
-  const [userCreate, setUserCreate] = useState('');
+  const [userFailedMessage, setUserFailureMessage] = useState("");
+  const [userSuccessMessage, setUserSuccessMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,17 +19,6 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      formData.password !== confirmPassword ||
-      !formData.password ||
-      !confirmPassword
-    ) {
-      setError("Passwords do not match!");
-      setInterval(() => {
-        setError(null);
-      }, 3000);
-      return;
-    }
     const userData = {
       name: formData.name,
       email: formData.email,
@@ -39,20 +30,31 @@ export default function SignUp() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       });
+      // if (
+      //   formData.password !== confirmPassword ||
+      //   !formData.password ||
+      //   !confirmPassword
+      // ) {
+      //   setError("Passwords do not match!");
+      //   setInterval(() => {
+      //     setError(null);
+      //   }, 3000);
+      //   return;
+      // }
       // console.log(response);
 
       const result = await response.json();
-      if (!result.OK) {
-        setUserCreate(result.message || 'Failed to create user');
+      if (result.success === true) {
+        setUserSuccessMessage(result.message);
         setTimeout(() => {
-          setUserCreate('');
+          setUserSuccessMessage("");
         }, 3000);
         return;
       }
-      {
-        setUserCreate(result.message);
+      if (result.success === false){
+        setUserFailureMessage(result.message);
         setTimeout(() => {
-          setUserCreate('');
+          setUserFailureMessage("");
         }, 3000);
         return;
       }
@@ -130,13 +132,18 @@ export default function SignUp() {
               {error && (
                 <p className="text-red-600 text-lg text-left">{error}</p>
               )}
-              {userCreate && (
+              {userFailedMessage && (
+                <p className="text-red-600 text-right text-lg">
+                  {userFailedMessage}
+                </p>
+              )}
+              {userSuccessMessage && (
                 <p className="text-green-600 text-right text-lg">
-                  {userCreate}
+                  {userSuccessMessage}
                 </p>
               )}
             </div>
-            <div className="mt-9 flex mx-auto">
+            <div className="flex mx-auto">
               <button
                 type="submit"
                 className="w-[400px] text-[#2C363F] border-2 border-[#2C363F] rounded-[3px] p-3 bg-[] uppercase font-semibold text-2xl"
@@ -144,6 +151,14 @@ export default function SignUp() {
                 Create Account
               </button>
             </div>
+          </div>
+          <div className="mt-5">
+            <p className="text-lg">
+              Already have an account?{" "}
+              <Link to='/signin'>
+              <span className="text-blue-500 underline">SignIn</span>
+              </Link>
+            </p>
           </div>
         </form>
       </div>

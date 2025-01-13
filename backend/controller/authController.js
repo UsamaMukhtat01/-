@@ -16,7 +16,8 @@ export const signup = async(req, res, next) =>{
         name==='' ||
         email==='' ||
         password===''){
-            next(errorHandler(400, 'All fields are mendetory to fill!'))
+            // next(errorHandler(400, 'All fields are mendetory to fill!'))
+            return res.json({success:false, message: 'All fields are required!'})
     }
     
     const hashedPassword = bcryptjs.hashSync(password, 10);
@@ -29,9 +30,9 @@ export const signup = async(req, res, next) =>{
 
     try{
         await newUser.save();
-        return res.status(200).json({"message": "User Created Successfully!"})
+        return res.status(200).json({success:true, message: "User Created Successfully!"})
     }catch(error){
-        return res.status(404).json({"message": "User Already exists!"})
+        return res.status(404).json({success:true, message: "User Already exists!"})
         // next(error);
     }
 }
@@ -39,28 +40,32 @@ export const signup = async(req, res, next) =>{
 export const signin = async(req, res, next)=>{
     const {email, password} = req.body;
 
-    if (!email ||
-        !password ||
+    if (
         email==='' ||
-        password===''){
-            return next(errorHandler(400, 'All fields are mendatory to fill!'));
+        password==='' ||
+        !email ||
+        !password){
+            return res.json({success:false, message: "Please provide all the information!"});
+            // return next(errorHandler(400, 'All fields are mendatory to fill!'));
         }
     try{
         const validUser = await User.findOne({email})
         if(!validUser){
-            return next(errorHandler(400, 'User not found!'));
+            return res.json({success:false, message: "User dosn't exist!"})
+            // return next(errorHandler(400, 'User not found!'));
         }
         const validPassword = bcryptjs.compareSync(password, validUser.password);
         const {password: pass, ...rest}= validUser._doc;
         if (!validPassword){
-            return next(errorHandler(400, 'Invalid Password'))
+            // return next(errorHandler(400, 'Invalid Password'))
+            return res.json({success:false, message: 'Invalid Password!'})
         }
 
         const token = jwt.sign({id: validUser._id, role: validUser.role}, process.env.JWT_SECRET)
         res
         .status(200)
         .cookie("access_token", token, {httpOnly: true})
-        .json(rest)
+        .json({success:true, message: "Signed In Successfully!", user: rest})
     }catch(error){
         next(error)
     }

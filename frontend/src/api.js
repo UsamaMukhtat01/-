@@ -1,3 +1,3 @@
-export const createAccount = async () =>{
+export const signUpAPI = async () =>{
 
 }

@@ -6,7 +6,7 @@ import { verifyToken } from '../utils/verifyToken.js';
 const router = express.Router();
 
 router.post('/signup', signup)
-router.get('/signin', signin)
+router.post('/signin', signin)
 router.patch('/promote/:id', verifyToken,promoteToAdmin)
 
 export default router;

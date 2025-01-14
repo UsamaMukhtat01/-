@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signinApi } from "../api";
+import { notification } from "antd";
 
 export default function Signin() {
-  const [formData, setFormData] = useState('');
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState("");
+  const [error, setError] = useState("");
   const [signinMessage, setSigninMessage] = useState("");
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,42 +18,41 @@ export default function Signin() {
   };
   // console.log(formData)
 
-  const handleSignIn = async (e) =>{
+  const handleSignIn = async (e) => {
     e.preventDefault();
-
-    const userData = {
-      email: formData.email,
-      password: formData.password,
-    }
-
-    try{
-      const response = await fetch('http://localhost:3000/api/auth/signin',{
-        method: "POST",
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(formData), // We can send the data directly from formData or by creating other function. Like below
-        // body: JSON.stringify(userData)
-      })
-      const result = await response.json()
+    try {
+      const result = await signinApi(formData);
       // console.log(result)
-      if(result.success === true){
+      if (result.success === true) {
         // This code is being commented because when user becomes signedIn, we are navigating the user to home page and he will not see the message due to instatnly navigating to home page.
 
         // setSigninMessage(result.message)
         // setTimeout(()=>{
         //   setSigninMessage('')
         // }, 3000)
-        Navigate('/')
+        localStorage.setItem('access_token', result.token)
+        notification.success({
+          message: "Successful",
+          description: result.message,
+          duration: 3,
+        });
+        navigate("/");
       }
-      if(result.success === false){
-        setError(result.message)
-        setTimeout(()=>{
-          setError('')
-        }, 3000)
+      if (result.success === false) {
+        notification.error({
+          message: "Failed",
+          description: result.message,
+          duration: 3,
+        });
+        // setError(result.message)
+        // setTimeout(()=>{
+        //   setError('')
+        // }, 3000)
       }
-    }catch(error){
-      console.error(error)
+    } catch (error) {
+      console.error(error);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col w-fit m-[5%]">
@@ -92,7 +93,10 @@ export default function Signin() {
                 onChange={handleChange}
               />
             </div>
-            <div>
+
+            {/* *******************Commented the below div tag because we using antd package to show success of failed messages */}
+
+            {/* <div>
               {error && (
                 <p className="text-red-600 text-lg text-left">{error}</p>
               )}
@@ -101,7 +105,7 @@ export default function Signin() {
                   {signinMessage}
                 </p>
               )}
-            </div>
+            </div> */}
             <div className="flex mx-auto">
               <button
                 type="submit"
@@ -114,13 +118,13 @@ export default function Signin() {
           <div className="mt-5">
             <p className="text-lg">
               Dont have an account?{" "}
-              <Link to='/signup'>
-              <span className="text-blue-500 underline">SignUp</span>
+              <Link to="/signup">
+                <span className="text-blue-500 underline">SignUp</span>
               </Link>
             </p>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

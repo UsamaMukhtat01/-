@@ -32,7 +32,7 @@ export const signup = async(req, res, next) =>{
         await newUser.save();
         return res.status(200).json({success:true, message: "User Created Successfully!"})
     }catch(error){
-        return res.status(404).json({success:true, message: "User Already exists!"})
+        return res.status(404).json({success:false, message: "Email Already exists!"})
         // next(error);
     }
 }
@@ -61,15 +61,18 @@ export const signin = async(req, res, next)=>{
             return res.json({success:false, message: 'Invalid Password!'})
         }
 
-        const token = jwt.sign({id: validUser._id, role: validUser.role}, process.env.JWT_SECRET)
+        const token = jwt.sign({id: validUser._id, role: validUser.role}, process.env.JWT_SECRET, {expiresIn:'1h'})
         res
         .status(200)
-        .cookie("access_token", token, {httpOnly: true})
-        .json({success:true, message: "Signed In Successfully!", user: rest})
+        .json({success:true, message: "Signed In Successfully!", user: rest, token})
     }catch(error){
         next(error)
     }
 }
+
+// export const checkAuth = async (req, res, next,) => {
+//     res.status(200).json({ success: true, message: "Token is valid!", user: req.user });
+// }
 
 export const promoteToAdmin = async (req, res, next) => {
     const {email} = req.body;

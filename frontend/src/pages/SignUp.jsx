@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import { signupApi } from "../api";
+import { notification } from "antd";
 
 export default function SignUp() {
   const [formData, setFormData] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(null);
+  const navigate = useNavigate()
   const [error, setError] = useState(null);
   const [userFailedMessage, setUserFailureMessage] = useState("");
   const [userSuccessMessage, setUserSuccessMessage] = useState("");
@@ -25,38 +28,32 @@ export default function SignUp() {
       password: formData.password,
     };
     try {
-      const response = await fetch("http://localhost:3000/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-      // if (
-      //   formData.password !== confirmPassword ||
-      //   !formData.password ||
-      //   !confirmPassword
-      // ) {
-      //   setError("Passwords do not match!");
-      //   setInterval(() => {
-      //     setError(null);
-      //   }, 3000);
-      //   return;
-      // }
-      // console.log(response);
-
-      const result = await response.json();
+      
+      const result = await signupApi(formData);
       if (result.success === true) {
-        setUserSuccessMessage(result.message);
-        setTimeout(() => {
-          setUserSuccessMessage("");
-        }, 3000);
-        return;
+        // setUserSuccessMessage(result.message);
+        // setTimeout(() => {
+        //   setUserSuccessMessage("");
+        // }, 3000);
+        // return;
+        notification.success({
+          message: "Successful",
+          description: result.message,
+          duration: 3,
+        });
+        navigate('/signin')
       }
       if (result.success === false){
-        setUserFailureMessage(result.message);
-        setTimeout(() => {
-          setUserFailureMessage("");
-        }, 3000);
-        return;
+        // setUserFailureMessage(result.message);
+        // setTimeout(() => {
+        //   setUserFailureMessage("");
+        // }, 3000);
+        // return;
+        notification.error({
+          message: "Failed",
+          description: result.message,
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -128,7 +125,9 @@ export default function SignUp() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
-            <div>
+            {/* *******************Commented the below div tag because we are using antd package to show success or failed messages */}
+
+            {/* <div>
               {error && (
                 <p className="text-red-600 text-lg text-left">{error}</p>
               )}
@@ -142,7 +141,7 @@ export default function SignUp() {
                   {userSuccessMessage}
                 </p>
               )}
-            </div>
+            </div> */}
             <div className="flex mx-auto">
               <button
                 type="submit"

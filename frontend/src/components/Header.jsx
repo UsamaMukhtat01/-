@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {jwtDecode} from "jwt-decode";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -9,6 +10,20 @@ export default function Header() {
   // *********************Sign Out
   useEffect(() => {
     const userToken = localStorage.getItem("access_token");
+    if (userToken) {
+      try {
+        const decoded = jwtDecode(userToken);
+        const currentTime = Date.now() / 1000; // Current time in seconds
+        if (decoded.exp < currentTime) {
+          // Token is expired
+          console.log("Token has expired. Clearing localStorage...");
+          localStorage.removeItem("access_token"); // Remove the expired token
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        localStorage.removeItem("access_token"); // Clear token if invalid
+      }
+    }
     if (userToken) {
       setAuthenticated(true);
     } else {

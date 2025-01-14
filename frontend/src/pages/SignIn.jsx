@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signinApi } from "../api";
 import { notification } from "antd";
+import Loader from "../components/Loader";
 
 export default function Signin() {
   const [formData, setFormData] = useState("");
   const [error, setError] = useState("");
   const [signinMessage, setSigninMessage] = useState("");
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,6 +23,7 @@ export default function Signin() {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setIsLoading(true)
     try {
       const result = await signinApi(formData);
       // console.log(result)
@@ -36,9 +40,11 @@ export default function Signin() {
           description: result.message,
           duration: 3,
         });
+        setIsLoading(false);
         navigate("/");
       }
       if (result.success === false) {
+        setIsLoading(false);
         notification.error({
           message: "Failed",
           description: result.message,
@@ -50,6 +56,7 @@ export default function Signin() {
         // }, 3000)
       }
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
@@ -111,7 +118,7 @@ export default function Signin() {
                 type="submit"
                 className="w-[400px] text-[#2C363F] border-2 border-[#2C363F] rounded-[3px] p-3 bg-[] uppercase font-semibold text-2xl"
               >
-                Sign In
+                {isLoading? (<Loader/>): "Sign In"}
               </button>
             </div>
           </div>

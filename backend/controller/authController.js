@@ -61,7 +61,7 @@ export const signin = async(req, res, next)=>{
             return res.json({success:false, message: 'Invalid Password!'})
         }
 
-        const token = jwt.sign({id: validUser._id, role: validUser.role}, process.env.JWT_SECRET, {expiresIn:'1h'})
+        const token = jwt.sign({id: validUser._id, role: validUser.role}, process.env.JWT_SECRET, {expiresIn:'1d'})
         res
         .status(200)
         .json({success:true, message: "Signed In Successfully!", user: rest, token})

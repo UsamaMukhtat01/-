@@ -70,3 +70,21 @@ export const getMovies = async ()=>{
     console.log(error)
   }
 }
+
+export const createMovie = async (requestBody)=>{
+  try{
+    const token = localStorage.getItem('access_token')
+    // console.log(token)
+    const response = await fetch('http://localhost:3000/api/user/createMovie/', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(requestBody)
+    })
+    return await response.json()
+  }catch(error){
+    console.log(error)
+  }
+}

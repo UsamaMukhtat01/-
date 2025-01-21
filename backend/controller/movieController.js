@@ -16,7 +16,7 @@ export const createMovie = async(req, res, next)=>{
     ){
         next(errorHandler(400, 'All fields are mendetory to fill!'))
     }
-    if(req.user.role==='User'){
+    if(req?.user?.role==='User'){
         return next(errorHandler(403, "You are not allowed to create movie"))
     }
 

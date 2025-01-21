@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import {Link, useNavigate} from 'react-router-dom'
 import { signupApi } from "../api";
 import { notification } from "antd";
+import Loader from "../components/Loader";
 
 export default function SignUp() {
   const [formData, setFormData] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
   const [error, setError] = useState(null);
   const [userFailedMessage, setUserFailureMessage] = useState("");
   const [userSuccessMessage, setUserSuccessMessage] = useState("");
@@ -28,7 +31,7 @@ export default function SignUp() {
       password: formData.password,
     };
     try {
-      
+      setIsLoading(true);
       const result = await signupApi(formData);
       if (result.success === true) {
         // setUserSuccessMessage(result.message);
@@ -55,7 +58,9 @@ export default function SignUp() {
           duration: 3,
         });
       }
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error("Network error:", error);
     }
   };
@@ -147,7 +152,7 @@ export default function SignUp() {
                 type="submit"
                 className="w-[400px] text-[#2C363F] border-2 border-[#2C363F] rounded-[3px] p-3 bg-[] uppercase font-semibold text-2xl"
               >
-                Create Account
+                {isLoading? <Loader/>:'Create Account'}
               </button>
             </div>
           </div>

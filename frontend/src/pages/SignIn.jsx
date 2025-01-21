@@ -59,6 +59,7 @@ export default function Signin() {
       setIsLoading(false);
       console.error(error);
     }
+    // console.log(result.token)
   };
 
   return (
